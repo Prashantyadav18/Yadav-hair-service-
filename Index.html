@@ -1,105 +1,100 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Royal Barber Shop</title>
 
 <style>
-body {
-    background:#0d0d0d;
-    color:white;
-    font-family: Arial, sans-serif;
-    text-align:center;
-}
-.container {
-    max-width:420px;
-    margin:auto;
-    background:#1b1b1b;
-    padding:20px;
-    border-radius:15px;
-}
-h1 { color:gold; }
+body { background:#0e0e0e; color:white; font-family:Arial; text-align:center; }
+.box { max-width:420px; margin:auto; background:#1c1c1c; padding:20px; border-radius:15px; }
 input, select, button {
-    width:100%;
-    padding:12px;
-    margin:8px 0;
-    border-radius:8px;
-    border:none;
-    font-size:16px;
+ width:100%; padding:12px; margin:8px 0; border-radius:8px; border:none;
 }
-button {
-    background:linear-gradient(45deg,gold,orange);
-    font-weight:bold;
-}
-.gallery img {
-    width:30%;
-    border-radius:10px;
-    margin:5px;
-}
-.razor {
-    width:90px;
-    animation: move 2s infinite alternate;
-}
-@keyframes move {
-    from{transform:translateX(-10px);}
-    to{transform:translateX(10px);}
-}
+button { background:gold; font-weight:bold; }
+.admin { background:#111; margin-top:20px; padding:15px; border-radius:10px; }
+.hide { display:none; }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-<h1>✂️ Royal Barber Shop</h1>
-<p>Premium Hair & Beard Styling</p>
+<div class="box">
+<h2>✂️ Royal Barber Shop</h2>
 
-<img class="razor" src="https://i.imgur.com/MX1K8jF.png">
-
-<input type="text" id="name" placeholder="Your Name">
-<input type="date" id="date">
-<input type="time" id="time">
+<input id="name" placeholder="Customer Name">
+<input id="date" type="date">
+<input id="time" type="time">
 
 <select id="service">
-    <option value="">Select Service</option>
-    <option value="Normal Haircut - ₹100">Normal Haircut - ₹100</option>
-    <option value="Fade Haircut - ₹150">Fade Haircut - ₹150</option>
-    <option value="Beard Trim - ₹80">Beard Trim - ₹80</option>
-    <option value="Hair + Beard - ₹200">Hair + Beard - ₹200</option>
+<option value="Haircut - ₹100">Haircut - ₹100</option>
+<option value="Fade Cut - ₹150">Fade Cut - ₹150</option>
+<option value="Beard Trim - ₹80">Beard Trim - ₹80</option>
+<option value="Hair + Beard - ₹200">Hair + Beard - ₹200</option>
 </select>
 
-<button onclick="sendOrder()">Book on WhatsApp</button>
+<button onclick="bookNow()">Book & WhatsApp</button>
 
-<h3>💈 Our Work</h3>
-<div class="gallery">
-    <img src="https://i.imgur.com/yKXG7pG.jpg">
-    <img src="https://i.imgur.com/2nCt3S5.jpg">
-    <img src="https://i.imgur.com/WZ4x6tZ.jpg">
+<h3>💳 Pay Now</h3>
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=8318288563@upi&pn=BarberShop">
+
 </div>
 
-<h3>📲 Scan to Chat</h3>
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://wa.me/919999999999">
+<!-- ADMIN PANEL -->
+<div class="box admin">
+<h3>🔐 Admin Panel</h3>
+<input type="password" id="pass" placeholder="Admin Password">
+<button onclick="login()">Login</button>
 
+<div id="adminArea" class="hide">
+<h4>📋 Bookings</h4>
+<div id="list"></div>
+
+<h4>Change Service Price</h4>
+<input id="newPrice" placeholder="Haircut - ₹120">
+<button onclick="updatePrice()">Update</button>
+</div>
 </div>
 
 <script>
-function sendOrder(){
-    let name = document.getElementById("name").value;
-    let date = document.getElementById("date").value;
-    let time = document.getElementById("time").value;
-    let service = document.getElementById("service").value;
+let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
 
-    if(!name || !date || !time || !service){
-        alert("Please fill all details");
-        return;
-    }
+function bookNow(){
+ let name = document.getElementById("name").value;
+ let date = document.getElementById("date").value;
+ let time = document.getElementById("time").value;
+ let service = document.getElementById("service").value;
 
-    let phone = "91XXXXXXXXXX"; // ← apna WhatsApp number daalo
+ if(!name||!date||!time){ alert("Fill all details"); return; }
 
-    let msg = `Hello Barber,%0AName: ${name}%0ADate: ${date}%0ATime: ${time}%0AService: ${service}`;
+ let data = {name, date, time, service};
+ bookings.push(data);
+ localStorage.setItem("bookings", JSON.stringify(bookings));
 
-    window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
+ let msg = `Hello Barber,%0AName: ${name}%0ADate: ${date}%0ATime: ${time}%0AService: ${service}`;
+ window.open("https://wa.me/918318288563?text="+msg);
+}
+
+function login(){
+ if(document.getElementById("pass").value === "admin123"){
+   document.getElementById("adminArea").style.display="block";
+   loadBookings();
+ } else alert("Wrong password");
+}
+
+function loadBookings(){
+ let box="";
+ bookings.forEach((b,i)=>{
+  box += `<p>${i+1}. ${b.name} - ${b.service} - ${b.date} ${b.time}</p>`;
+ });
+ document.getElementById("list").innerHTML = box;
+}
+
+function updatePrice(){
+ let p = document.getElementById("newPrice").value;
+ document.getElementById("service").options[0].text = p;
+ alert("Price Updated");
 }
 </script>
 
