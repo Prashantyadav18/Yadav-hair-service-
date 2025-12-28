@@ -1,1 +1,107 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Royal Barber Shop</title>
+
+<style>
+body {
+    background:#0d0d0d;
+    color:white;
+    font-family: Arial, sans-serif;
+    text-align:center;
+}
+.container {
+    max-width:420px;
+    margin:auto;
+    background:#1b1b1b;
+    padding:20px;
+    border-radius:15px;
+}
+h1 { color:gold; }
+input, select, button {
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border-radius:8px;
+    border:none;
+    font-size:16px;
+}
+button {
+    background:linear-gradient(45deg,gold,orange);
+    font-weight:bold;
+}
+.gallery img {
+    width:30%;
+    border-radius:10px;
+    margin:5px;
+}
+.razor {
+    width:90px;
+    animation: move 2s infinite alternate;
+}
+@keyframes move {
+    from{transform:translateX(-10px);}
+    to{transform:translateX(10px);}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h1>✂️ Royal Barber Shop</h1>
+<p>Premium Hair & Beard Styling</p>
+
+<img class="razor" src="https://i.imgur.com/MX1K8jF.png">
+
+<input type="text" id="name" placeholder="Your Name">
+<input type="date" id="date">
+<input type="time" id="time">
+
+<select id="service">
+    <option value="">Select Service</option>
+    <option value="Normal Haircut - ₹100">Normal Haircut - ₹100</option>
+    <option value="Fade Haircut - ₹150">Fade Haircut - ₹150</option>
+    <option value="Beard Trim - ₹80">Beard Trim - ₹80</option>
+    <option value="Hair + Beard - ₹200">Hair + Beard - ₹200</option>
+</select>
+
+<button onclick="sendOrder()">Book on WhatsApp</button>
+
+<h3>💈 Our Work</h3>
+<div class="gallery">
+    <img src="https://i.imgur.com/yKXG7pG.jpg">
+    <img src="https://i.imgur.com/2nCt3S5.jpg">
+    <img src="https://i.imgur.com/WZ4x6tZ.jpg">
+</div>
+
+<h3>📲 Scan to Chat</h3>
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://wa.me/919999999999">
+
+</div>
+
+<script>
+function sendOrder(){
+    let name = document.getElementById("name").value;
+    let date = document.getElementById("date").value;
+    let time = document.getElementById("time").value;
+    let service = document.getElementById("service").value;
+
+    if(!name || !date || !time || !service){
+        alert("Please fill all details");
+        return;
+    }
+
+    let phone = "91XXXXXXXXXX"; // ← apna WhatsApp number daalo
+
+    let msg = `Hello Barber,%0AName: ${name}%0ADate: ${date}%0ATime: ${time}%0AService: ${service}`;
+
+    window.open(`https://wa.me/${phone}?text=${msg}`, "_blank");
+}
+</script>
+
+</body>
+</html>
